@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<!-- Header -->
+<header class="bg-blue-600 text-white py-4 shadow">
+    <div class="container mx-auto px-4">
+        <h1 class="text-3xl font-bold" th:text="${title}">Library Management System</h1>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Add Book Section -->
+        <section class="bg-white p-6 shadow rounded">
+            <h2 class="text-xl font-semibold mb-4">Add New Book</h2>
+            <form th:action="@{/books/add}" method="post" class="space-y-4">
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                    <input type="text" id="title" name="title" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="isbn" class="block text-sm font-medium text-gray-700">ISBN</label>
+                    <input type="text" id="isbn" name="isbn" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="author" class="block text-sm font-medium text-gray-700">Author</label>
+                    <input type="text" id="author" name="author" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="genre" class="block text-sm font-medium text-gray-700">Genre</label>
+                    <input type="text" id="genre" name="genre" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Add Book</button>
+            </form>
+        </section>
+
+        <!-- Member Section -->
+        <section class="bg-white p-6 shadow rounded">
+            <h2 class="text-xl font-semibold mb-4">Members</h2>
+            <ul class="space-y-3">
+                <li th:each="member : ${members}" class="bg-gray-50 p-4 rounded shadow">
+                    <p><span class="font-semibold" th:text="${member.name}"></span> - <span th:text="${member.email}"></span></p>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Borrowed Books Section -->
+        <section class="bg-white p-6 shadow rounded">
+            <h2 class="text-xl font-semibold mb-4">Currently Borrowed Books</h2>
+            <ul class="space-y-3">
+                <li th:each="book : ${borrowedBooks}" class="bg-gray-50 p-4 rounded shadow">
+                    <p>
+                        <span class="font-semibold" th:text="${book.title}"></span> - Borrowed by <span th:text="${book.borrowerName}"></span>
+                    </p>
+                </li>
+            </ul>
+        </section>
+
+        <!-- View Section -->
+        <section class="bg-white p-6 shadow rounded">
+            <h2 class="text-xl font-semibold mb-4">View Book Details</h2>
+            <form th:action="@{/books/search}" method="get" class="space-y-4">
+                <div>
+                    <label for="search" class="block text-sm font-medium text-gray-700">Search by Title or ISBN</label>
+                    <input type="text" id="search" name="search" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500">
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Search</button>
+            </form>
+            <div class="mt-4">
+                <h3 class="text-lg font-semibold">Book Details</h3>
+                <p class="mt-2 text-gray-700" th:text="${bookDetails != null ? bookDetails : 'No book selected'}"></p>
+            </div>
+        </section>
+
+        <!-- Other Sections (Update and Delete) -->
+        <!-- Update Section -->
+        <section class="bg-white p-6 shadow rounded">
+            <h2 class="text-xl font-semibold mb-4">Update Book Information</h2>
+            <form th:action="@{/books/update}" method="post" class="space-y-4">
+                <!-- Search for Book to Update -->
+                <div>
+                    <label for="update-search" class="block text-sm font-medium text-gray-700">Search by Title or ISBN</label>
+                    <input type="text" id="update-search" name="search" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500" th:value="${bookToUpdate?.search}">
+                </div>
+
+                <!-- Update Book Details -->
+                <div>
+                    <label for="update-title" class="block text-sm font-medium text-gray-700">New Title</label>
+                    <input type="text" id="update-title" name="title" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500" th:value="${bookToUpdate?.title}">
+                </div>
+                <div>
+                    <label for="update-author" class="block text-sm font-medium text-gray-700">New Author</label>
+                    <input type="text" id="update-author" name="author" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500" th:value="${bookToUpdate?.author}">
+                </div>
+                <div>
+                    <label for="update-genre" class="block text-sm font-medium text-gray-700">New Genre</label>
+                    <input type="text" id="update-genre" name="genre" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500" th:value="${bookToUpdate?.genre}">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700">Update Book</button>
+            </form>
+        </section>
+
+        <!-- Delete Section -->
+        <section class="bg-white p-6 shadow rounded">
+            <h2 class="text-xl font-semibold mb-4">Delete Book</h2>
+            <form th:action="@{/books/delete}" method="post" class="space-y-4">
+                <!-- Search for Book to Delete -->
+                <div>
+                    <label for="delete-search" class="block text-sm font-medium text-gray-700">Search by Title or ISBN</label>
+                    <input type="text" id="delete-search" name="search" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500" th:value="${bookToDelete?.search}">
+                </div>
+
+                <!-- Confirm Deletion -->
+                <button type="submit" class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700">Delete Book</button>
+            </form>
+
+            <!-- Optional Success/Failure Messages -->
+            <div class="mt-4" th:if="${deleteMessage}">
+                <p class="text-gray-700" th:text="${deleteMessage}"></p>
+            </div>
+        </section>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-4">
+    <div class="container mx-auto px-4 text-center">
+        <p>&copy; 2024 Library Management System</p>
+    </div>
+</footer>
+</body>
+</html>
